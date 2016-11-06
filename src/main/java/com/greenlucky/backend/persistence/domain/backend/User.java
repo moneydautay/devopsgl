@@ -2,9 +2,12 @@ package com.greenlucky.backend.persistence.domain.backend;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +16,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
-public class User implements Serializable{
+public class User implements Serializable, UserDetails{
 
     /** The Serial Version UID for Serializable classes */
     private static final long serialVersionUID = 1L;
@@ -57,6 +60,8 @@ public class User implements Serializable{
 
     @Value("true")
     private boolean enabled;
+
+
 
     public User(){
 
@@ -172,6 +177,29 @@ public class User implements Serializable{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        userRoles.forEach(ur->authorities.add(new Authority(ur.getRole().getName())));
+        return  authorities;
     }
 
     @Override

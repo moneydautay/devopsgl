@@ -36,7 +36,7 @@ public class DevopsglApplication implements CommandLineRunner{
 		Set<UserRole> userRoles = new HashSet<>();
 		userRoles.add(new UserRole(user, new Role(RolesEnum.BASIC)));
 		LOGGER.debug("Creating user with username: {}", user.getUsername());
-		userService.createUser(user, PlansEnum.PRO, userRoles);
+		userService.createUser(user, PlansEnum.BASIC, userRoles);
 		LOGGER.info("User {} created", user.getUsername());
 	}
 }

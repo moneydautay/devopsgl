@@ -66,25 +66,10 @@ public class RepositoryIntergationTest {
     @Test
     public void testCreateUser() throws Exception{
 
-        Plan plan = createBasicPlan(PlansEnum.BASIC);
-        planRepository.save(plan);
 
-        User user = UserUtils.createBasicUser();
-        user.setPlan(plan);
+        User basicUser = createBasicUser();
 
-        Role basicRole = createBasicRole(RolesEnum.BASIC);
-        Set<UserRole> userRoles = new HashSet<>();
-        UserRole userRole = new UserRole(user, basicRole);
-        userRoles.add(userRole);
-
-        user.getUserRoles().addAll(userRoles);
-
-        for (UserRole ur : userRoles) {
-            roleRepository.save(ur.getRole());
-        }
-
-        user = userRepository.save(user);
-        User newlyCreatedUser = userRepository.findOne(user.getId());
+        User newlyCreatedUser = userRepository.findOne(basicUser.getId());
         Assert.assertNotNull(newlyCreatedUser);
         Assert.assertTrue(newlyCreatedUser.getId() != 0);
         Assert.assertNotNull(newlyCreatedUser.getPlan());
@@ -94,6 +79,32 @@ public class RepositoryIntergationTest {
             Assert.assertNotNull(ur.getRole());
             Assert.assertNotNull(ur.getRole().getId());
         }
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception{
+        User basicUser = createBasicUser();
+        userRepository.delete(basicUser.getId());
+    }
+
+    private User createBasicUser() {
+
+        Plan plan = createBasicPlan(PlansEnum.BASIC);
+        planRepository.save(plan);
+
+        User user = UserUtils.createBasicUser();
+        user.setPlan(plan);
+
+        Role basicRole = createBasicRole(RolesEnum.BASIC);
+        roleRepository.save(basicRole);
+
+        Set<UserRole> userRoles = new HashSet<>();
+        UserRole userRole = new UserRole(user, basicRole);
+        userRoles.add(userRole);
+
+        user.getUserRoles().addAll(userRoles);
+        user = userRepository.save(user);
+        return user;
     }
 
     private Plan createBasicPlan(PlansEnum plansEnum){
