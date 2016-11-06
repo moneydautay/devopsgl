@@ -8,6 +8,7 @@ import com.greenlucky.backend.persistence.responsitories.RoleRepository;
 import com.greenlucky.backend.persistence.responsitories.UserRepository;
 import com.greenlucky.enums.PlansEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,14 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public User createUser(User user, PlansEnum plansEnum, Set<UserRole> userRoles){
+
+        String encryptPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptPassword);
 
         Plan plan = new Plan(plansEnum);
         //It makes sure plansEnum exit in the database
