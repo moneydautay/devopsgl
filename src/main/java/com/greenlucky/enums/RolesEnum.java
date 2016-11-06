@@ -1,7 +1,7 @@
-package com.greenlucky.utils;
+package com.greenlucky.enums;
 
 /**
- * Didines possible roles
+ * Defines possible roles
  * Created by Mr Lam on 6/11/2016.
  */
 public enum RolesEnum {

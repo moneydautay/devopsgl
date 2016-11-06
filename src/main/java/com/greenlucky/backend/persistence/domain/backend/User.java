@@ -1,6 +1,7 @@
 package com.greenlucky.backend.persistence.domain.backend;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class User implements Serializable{
     private String country;
 
     @Column(name = "profile_image_url")
-    private String stripeImageUrl;
+    private String profileImageUrl;
 
     @Column(name = "stripe_customer_id")
     private String stripeCustomerId;
@@ -53,6 +54,9 @@ public class User implements Serializable{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<UserRole> userRoles = new HashSet<UserRole>();
+
+    @Value("true")
+    private boolean enabled;
 
     public User(){
 
@@ -130,12 +134,12 @@ public class User implements Serializable{
         this.country = country;
     }
 
-    public String getStripeImageUrl() {
-        return stripeImageUrl;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 
-    public void setStripeImageUrl(String stripeImageUrl) {
-        this.stripeImageUrl = stripeImageUrl;
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getStripeCustomerId() {
@@ -162,6 +166,14 @@ public class User implements Serializable{
         this.userRoles = userRoles;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("User{");
@@ -173,7 +185,7 @@ public class User implements Serializable{
         sb.append(", phoneNumber='").append(phoneNumber).append('\'');
         sb.append(", description='").append(description).append('\'');
         sb.append(", country='").append(country).append('\'');
-        sb.append(", stripeImageUrl='").append(stripeImageUrl).append('\'');
+        sb.append(", profileImageUrl='").append(profileImageUrl).append('\'');
         sb.append(", stripeCustomerId='").append(stripeCustomerId).append('\'');
         sb.append(", plan=").append(plan);
         sb.append('}');

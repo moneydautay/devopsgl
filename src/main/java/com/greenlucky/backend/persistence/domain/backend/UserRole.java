@@ -1,5 +1,7 @@
 package com.greenlucky.backend.persistence.domain.backend;
 
+import com.greenlucky.enums.RolesEnum;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -29,6 +31,11 @@ public class UserRole implements Serializable{
     public UserRole(User user, Role role){
         this.user = user;
         this.role = role;
+    }
+
+    public UserRole(User user, RolesEnum rolesEnum){
+        this.user = user;
+        this.role = new Role(rolesEnum);
     }
 
     public User getUser() {

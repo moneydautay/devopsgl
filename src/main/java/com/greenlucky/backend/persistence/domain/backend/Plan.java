@@ -1,5 +1,7 @@
 package com.greenlucky.backend.persistence.domain.backend;
 
+import com.greenlucky.enums.PlansEnum;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -27,6 +29,11 @@ public class Plan implements Serializable{
     public Plan(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Plan(PlansEnum plansEnum){
+        this.id = plansEnum.getId();
+        this.name = plansEnum.getPlanName();
     }
 
     public int getId() {

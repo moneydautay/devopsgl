@@ -1,5 +1,7 @@
 package com.greenlucky.backend.persistence.domain.backend;
 
+import com.greenlucky.enums.RolesEnum;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -22,6 +24,15 @@ public class Role implements Serializable{
     private String name;
 
     public Role() {
+    }
+
+    /**
+     * Full constructor.
+     * @param rolesEnum
+     */
+    public Role(RolesEnum rolesEnum){
+        this.id = rolesEnum.getId();
+        this.name = rolesEnum.getRoleName();
     }
 
     public int getId() {
