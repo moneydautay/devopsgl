@@ -13,7 +13,9 @@ import com.greenlucky.enums.RolesEnum;
 import com.greenlucky.utils.UserUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -46,6 +48,7 @@ public class RepositoryIntergationTest {
         Assert.assertNotNull(roleRepository);
     }
 
+    @Rule public TestName testName = new TestName();
 
     @Test
     public void testCreateNewPlan() throws Exception{
@@ -66,8 +69,10 @@ public class RepositoryIntergationTest {
     @Test
     public void testCreateUser() throws Exception{
 
+        String username = testName.getMethodName();
+        String email = username+"@gmail.com";
 
-        User basicUser = createBasicUser();
+        User basicUser = createBasicUser(username, email);
 
         User newlyCreatedUser = userRepository.findOne(basicUser.getId());
         Assert.assertNotNull(newlyCreatedUser);
@@ -83,16 +88,19 @@ public class RepositoryIntergationTest {
 
     @Test
     public void testDeleteUser() throws Exception{
-        User basicUser = createBasicUser();
+        String username = testName.getMethodName();
+        String email = username+"@gmail.com";
+
+        User basicUser = createBasicUser(username, email);
         userRepository.delete(basicUser.getId());
     }
 
-    private User createBasicUser() {
+    private User createBasicUser(String username, String email) {
 
         Plan plan = createBasicPlan(PlansEnum.BASIC);
         planRepository.save(plan);
 
-        User user = UserUtils.createBasicUser();
+        User user = UserUtils.createBasicUser(username, email);
         user.setPlan(plan);
 
         Role basicRole = createBasicRole(RolesEnum.BASIC);

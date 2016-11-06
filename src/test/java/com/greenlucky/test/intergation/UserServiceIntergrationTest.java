@@ -9,7 +9,9 @@ import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
 import com.greenlucky.utils.UserUtils;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -28,11 +30,17 @@ public class UserServiceIntergrationTest {
     @Autowired
     private UserService userService;
 
+    @Rule
+    public TestName testName = new TestName();
+
     @Test
     public  void testCreateNewUser() throws Exception{
 
+        String username = testName.getMethodName();
+        String email = username+"@gmail.com";
+
         Set<UserRole> userRoles = new HashSet<>();
-        User userBasic = UserUtils.createBasicUser();
+        User userBasic = UserUtils.createBasicUser(username, email);
         userRoles.add(new UserRole(userBasic,new Role(RolesEnum.BASIC)));
 
         User user = userService.createUser(userBasic, PlansEnum.BASIC, userRoles);
