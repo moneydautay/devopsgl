@@ -19,5 +19,4 @@ public interface EmailService{
      * @param message The object containing the email content
      */
     public void sendGenericEmailMessage(SimpleMailMessage message);
-
 }

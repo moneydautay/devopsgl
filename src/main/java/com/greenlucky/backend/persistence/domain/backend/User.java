@@ -25,6 +25,8 @@ public class User implements Serializable{
 
     private String password;
 
+    private String email;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -47,9 +49,9 @@ public class User implements Serializable{
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plan_id")
-    private Plan planId;
+    private Plan plan;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<UserRole> userRoles = new HashSet<UserRole>();
 
     public User(){
@@ -78,6 +80,14 @@ public class User implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -136,12 +146,12 @@ public class User implements Serializable{
         this.stripeCustomerId = stripeCustomerId;
     }
 
-    public Plan getPlanId() {
-        return planId;
+    public Plan getPlan() {
+        return plan;
     }
 
-    public void setPlanId(Plan planId) {
-        this.planId = planId;
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 
     public Set<UserRole> getUserRoles() {
@@ -165,7 +175,7 @@ public class User implements Serializable{
         sb.append(", country='").append(country).append('\'');
         sb.append(", stripeImageUrl='").append(stripeImageUrl).append('\'');
         sb.append(", stripeCustomerId='").append(stripeCustomerId).append('\'');
-        sb.append(", planId=").append(planId);
+        sb.append(", plan=").append(plan);
         sb.append('}');
         return sb.toString();
     }
