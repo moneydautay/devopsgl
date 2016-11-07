@@ -63,7 +63,12 @@ public class User implements Serializable, UserDetails{
     @Value("true")
     private boolean enabled;
 
-
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "user"
+    )
+    private Set<PasswordResetToke> passwordResetTokes = new HashSet<>();
 
     public User(){
 
