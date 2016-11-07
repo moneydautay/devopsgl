@@ -17,6 +17,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by Mr Lam on 6/11/2016.
@@ -77,5 +78,22 @@ public class RepositoryIntergationTest extends AbstractIntegrationTest{
 
         User basicUser = createBasicUser(username, email);
         userRepository.delete(basicUser.getId());
+    }
+
+    @Test
+    public void testUpdateUserPassword() throws Exception{
+
+        User user = createBasicUser(testName);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getId());
+
+        String password = UUID.randomUUID().toString();
+        userRepository.updateUserPassword(user.getId(),password);
+
+        user = userRepository.findOne(user.getId());
+        Assert.assertEquals(password, user.getPassword());
+
+
+
     }
 }

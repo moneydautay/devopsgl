@@ -9,8 +9,6 @@ import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
 import com.greenlucky.utils.UserUtils;
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +19,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Mr Lam on 6/11/2016.
+ * Created by Mr Lam on 7/11/2016.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = DevopsglApplication.class)
-public class UserServiceIntergrationTest {
+@SpringApplicationConfiguration(DevopsglApplication.class)
+public abstract class AbstracServiceIntegrationTest {
 
     @Autowired
     private UserService userService;
 
-    @Rule
-    public TestName testName = new TestName();
-
-    @Test
-    public  void testCreateNewUser() throws Exception{
-
+    protected User createUser(TestName testName){
         String username = testName.getMethodName();
         String email = username+"@gmail.com";
 
@@ -46,5 +39,6 @@ public class UserServiceIntergrationTest {
         User user = userService.createUser(userBasic, PlansEnum.BASIC, userRoles);
         Assert.assertNotNull(user);
         Assert.assertNotNull(user.getId());
+        return user;
     }
 }

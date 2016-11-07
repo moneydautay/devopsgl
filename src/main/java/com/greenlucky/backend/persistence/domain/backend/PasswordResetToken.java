@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
  * Created by Mr Lam on 7/11/2016.
  */
 @Entity
-public class PasswordResetToke implements Serializable{
+public class PasswordResetToken implements Serializable{
 
     /** The Serial Version UID for Serializable classes */
     private static final long serialVersionUID = 1L;
     
     /** The application logger */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordResetToke.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordResetToken.class);
     private static final Integer DEFAULT_TOKEN_LENGTH_IN_MINUTES = 120;
 
     @Id
@@ -36,10 +36,10 @@ public class PasswordResetToke implements Serializable{
     @Convert(converter = LocalDatetimeAttributeConverter.class)
     private LocalDateTime expiryDate;
 
-    public PasswordResetToke() {
+    public PasswordResetToken() {
     }
 
-    public PasswordResetToke(String token, User user, LocalDateTime createDateTime, int expirationInMinutes) {
+    public PasswordResetToken(String token, User user, LocalDateTime createDateTime, int expirationInMinutes) {
         if(token == null || user == null || createDateTime == null)
             throw new IllegalArgumentException("Token, User and creation date time can't be not null.");
         if(expirationInMinutes == 0){
@@ -88,7 +88,7 @@ public class PasswordResetToke implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PasswordResetToke that = (PasswordResetToke) o;
+        PasswordResetToken that = (PasswordResetToken) o;
 
         return id == that.id;
 
@@ -101,7 +101,7 @@ public class PasswordResetToke implements Serializable{
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PasswordResetToke{");
+        final StringBuilder sb = new StringBuilder("PasswordResetToken{");
         sb.append("id=").append(id);
         sb.append(", token='").append(token).append('\'');
         sb.append(", user=").append(user);

@@ -68,7 +68,7 @@ public class User implements Serializable, UserDetails{
             fetch = FetchType.LAZY,
             mappedBy = "user"
     )
-    private Set<PasswordResetToke> passwordResetTokes = new HashSet<>();
+    private Set<PasswordResetToken> passwordResetTokens = new HashSet<>();
 
     public User(){
 

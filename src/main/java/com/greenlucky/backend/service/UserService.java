@@ -7,6 +7,8 @@ import com.greenlucky.backend.persistence.responsitories.PlanRepository;
 import com.greenlucky.backend.persistence.responsitories.RoleRepository;
 import com.greenlucky.backend.persistence.responsitories.UserRepository;
 import com.greenlucky.enums.PlansEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,11 @@ import java.util.Set;
  */
 @Service
 @Transactional(readOnly = true)
-public class UserService {
-
+public class UserService{
+    
+    /** The application logger */
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    
     @Autowired
     private RoleRepository roleRepository;
 
@@ -56,5 +61,12 @@ public class UserService {
         user = userRepository.save(user);
 
         return user;
+    }
+
+    @Transactional
+    public void updateUserPassword(long userId, String password){
+        password = passwordEncoder.encode(password);
+        userRepository.updateUserPassword(userId, password);
+        LOGGER.debug("Password updated successfully for user id {}", userId);
     }
 }
