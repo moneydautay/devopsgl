@@ -1,6 +1,9 @@
 package com.greenlucky.utils;
 
 import com.greenlucky.backend.persistence.domain.backend.User;
+import com.greenlucky.web.controllers.ForgotMyPasswordController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Mr Lam on 6/11/2016.
@@ -31,6 +34,29 @@ public class UserUtils {
         user.setProfileImageUrl("https://lh3.googleusercontent.com/Oh8BC2B14IcYmDCkfrME89EXgvg-zrfSpqugz5vpw2RjpmV_q7UPtSox-qgViE-fCXlLXHdxVg=w1920-h1080-rw-no");
 
         return user;
+    }
 
+
+    /**
+     * Creates create password reset url from HttpServletRequest, userId and token
+     * @param request
+     * @param userId
+     * @param token
+     * @return password reset url from HttpServletRequest, userId and token
+     */
+    public static String createPasswordResetUrl(HttpServletRequest request, Long userId, String token) {
+        String passwordResetUrl =
+                request.getScheme() +
+                        "://" +
+                        request.getServerName() +
+                        ":" +
+                        request.getServerPort() +
+                        request.getContextPath() +
+                        ForgotMyPasswordController.CHANGE_PASSWORD_PATH +
+                        "?id="+
+                        userId +
+                        "&token=" +
+                        token;
+        return passwordResetUrl;
     }
 }

@@ -1,7 +1,7 @@
 package com.greenlucky.test;
 
 import com.greenlucky.DevopsglApplication;
-import com.greenlucky.web.i18n.I18NService;
+import com.greenlucky.backend.service.I18NService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

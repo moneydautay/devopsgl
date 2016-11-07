@@ -34,7 +34,7 @@ public class DevopsglApplication implements CommandLineRunner{
 	@Value("${webmaster.password}")
 	private String webmasterPassword;
 
-	@Value("${webmaster.email")
+	@Value("${webmaster.email}")
 	private String webmasterEmail;
 
 	public static void main(String[] args) {
