@@ -15,6 +15,6 @@ public interface PasswordResetTokeRepository extends CrudRepository<PasswordRese
 
     PasswordResetToke findByToken(String token);
 
-    @Query("select ptr from PasswordResetToke ptr inner join ptr.user u where ptr.user.id = ?1")
+    @Query("select ptr from PasswordResetToken ptr inner join ptr.user u where ptr.user.id = ?1")
     Set<PasswordResetToke> findAllByUserId(Long userId);
 }
