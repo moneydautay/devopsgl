@@ -170,6 +170,12 @@ function main() {
                     identical: {
                         field: 'confirmPassword',
                         message: 'The password and its confirm are not the same'
+                    },
+                    stringLength:{
+                        message: 'Password must be greater or equal than 6 characters',
+                        min: function (value, validator, $field ) {
+                            return 6 - (value.match(/\r/g) || []).length;
+                        }
                     }
                 }
             },

@@ -63,6 +63,30 @@ public class UserService{
         return user;
     }
 
+    /**
+     * Returns a user given by email or null if user was not found.
+     * @param email The email associated to the user to find
+     * @return a user for the given email or null if user was not found
+     */
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+
+    /**
+     * Returns a user given by username or null if user was not found
+     * @param username The username associated to the user to find
+     * @return
+     */
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
+
+    /**
+     * Update password given by userId and password
+     * @param userId The user id given by required user to get new password (in forgot password) or change password
+     * @param password The new password of user want changing
+     */
     @Transactional
     public void updateUserPassword(long userId, String password){
         password = passwordEncoder.encode(password);

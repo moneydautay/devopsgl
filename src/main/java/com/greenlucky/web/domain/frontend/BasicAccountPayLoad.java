@@ -18,29 +18,34 @@ public class BasicAccountPayLoad implements Serializable{
     @Email
     private String email;
 
+    @NotNull
     private String username;
 
+    @NotNull
     private String password;
 
+    @NotNull
     private String confirmPassword;
 
+    @NotNull
     private String firstName;
 
+    @NotNull
     private String lastName;
 
+    @NotNull
     private String description;
 
+    @NotNull
     private String phoneNumber;
 
+    @NotNull
     private String country;
 
 
     public BasicAccountPayLoad() {
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public String getEmail() {
         return email;

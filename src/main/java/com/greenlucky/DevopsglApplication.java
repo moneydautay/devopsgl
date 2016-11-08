@@ -3,6 +3,7 @@ package com.greenlucky;
 import com.greenlucky.backend.persistence.domain.backend.Role;
 import com.greenlucky.backend.persistence.domain.backend.User;
 import com.greenlucky.backend.persistence.domain.backend.UserRole;
+import com.greenlucky.backend.service.PlanService;
 import com.greenlucky.backend.service.UserService;
 import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
@@ -27,6 +28,8 @@ public class DevopsglApplication implements CommandLineRunner{
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PlanService planService;
 
 	@Value("${webmaster.username}")
 	private String webmasterUsername;
@@ -43,6 +46,12 @@ public class DevopsglApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
+
+		LOGGER.info("Creating Basic and Pro plans into the database..");
+		//Creates a basic plan
+		planService.createPlan(PlansEnum.BASIC.getId());
+		//Creates a pro plan
+		planService.createPlan(PlansEnum.PRO.getId());
 
 		User user = UserUtils.createBasicUser(webmasterUsername, webmasterEmail);
 		user.setPassword(webmasterPassword);
