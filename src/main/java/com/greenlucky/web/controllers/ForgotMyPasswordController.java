@@ -176,6 +176,5 @@ public class ForgotMyPasswordController {
         model.addAttribute(PASSWORD_RESET_ATTRIBUTE_NAME, "true");
 
         return  CHANGE_PASSWORD_VIEW_NAME;
-
     }
 }
