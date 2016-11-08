@@ -1,0 +1,147 @@
+package com.greenlucky.web.domain.frontend;
+
+import org.hibernate.validator.constraints.Email;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+/**
+ * Contains basic information account that users have filled in the sign up form
+ * Created by Mr Lam on 8/11/2016.
+ */
+public class BasicAccountPayLoad implements Serializable{
+
+    /** The Serial Version UID for Serializable classes */
+    private static final long serialVersionUID = 1L;
+
+    @NotNull
+    @Email
+    private String email;
+
+    private String username;
+
+    private String password;
+
+    private String confirmPassword;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String description;
+
+    private String phoneNumber;
+
+    private String country;
+
+
+    public BasicAccountPayLoad() {
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BasicAccountPayLoad that = (BasicAccountPayLoad) o;
+
+        return email != null ? email.equals(that.email) : that.email == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return email != null ? email.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("BasicAccountPayLoad{");
+        sb.append("email='").append(email).append('\'');
+        sb.append(", username='").append(username).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", confirmPassword='").append(confirmPassword).append('\'');
+        sb.append(", firstName='").append(firstName).append('\'');
+        sb.append(", lastName='").append(lastName).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", phoneNumber='").append(phoneNumber).append('\'');
+        sb.append(", country='").append(country).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+}

@@ -2,6 +2,7 @@ package com.greenlucky.utils;
 
 import com.greenlucky.backend.persistence.domain.backend.User;
 import com.greenlucky.web.controllers.ForgotMyPasswordController;
+import com.greenlucky.web.domain.frontend.BasicAccountPayLoad;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,5 +59,20 @@ public class UserUtils {
                         "&token=" +
                         token;
         return passwordResetUrl;
+    }
+
+    public static <T extends BasicAccountPayLoad> User fromWebUserToDomainUser(T frontendPayload) {
+        User user = new User();
+        user.setUsername(frontendPayload.getUsername());
+        user.setPassword(frontendPayload.getPassword());
+        user.setFirstName(frontendPayload.getFirstName());
+        user.setLastName(frontendPayload.getLastName());
+        user.setEmail(frontendPayload.getEmail());
+        user.setPhoneNumber(frontendPayload.getPhoneNumber());
+        user.setDescription(frontendPayload.getDescription());
+        user.setEnabled(true);
+        user.setCountry(frontendPayload.getCountry());
+
+        return user;
     }
 }

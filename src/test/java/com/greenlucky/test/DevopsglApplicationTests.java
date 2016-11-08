@@ -20,7 +20,6 @@ public class DevopsglApplicationTests {
 	/** The application logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(DevopsglApplicationTests.class);
 
-
 	@Test
 	public void contextLoads() {
 
