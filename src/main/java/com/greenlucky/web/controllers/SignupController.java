@@ -5,6 +5,7 @@ import com.greenlucky.backend.persistence.domain.backend.User;
 import com.greenlucky.backend.persistence.domain.backend.UserRole;
 import com.greenlucky.backend.service.I18NService;
 import com.greenlucky.backend.service.PlanService;
+import com.greenlucky.backend.service.S3Service;
 import com.greenlucky.backend.service.UserService;
 import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -46,6 +48,9 @@ public class SignupController {
 
     @Autowired
     private I18NService i18NService;
+
+    @Autowired
+    private S3Service s3Service;
 
     public static final String SIGNUP_URL_MAPPING = "/signup";
 
@@ -73,7 +78,8 @@ public class SignupController {
     }
 
     @RequestMapping(value = SIGNUP_URL_MAPPING, method = RequestMethod.POST)
-    public String signupPost(@RequestParam("planId") int planId,
+    public String signupPost(@RequestParam(name = "planId", required = true) int planId,
+                             @RequestParam(name = "profile", required = false) MultipartFile file,
                              @ModelAttribute(PAYLOAD_MODEL_KEY_NAME) @Valid ProAccountPayload payload,
                              Locale locale, Model model) throws IOException{
         if(planId != PlansEnum.BASIC.getId() && planId != PlansEnum.PRO.getId()){
@@ -110,6 +116,19 @@ public class SignupController {
 
         LOGGER.debug("Transforming user payload into User domain object");
         User user = UserUtils.fromWebUserToDomainUser(payload);
+
+        LOGGER.error("File name: "+file.getOriginalFilename());
+        //Check profile file not null
+        if(file != null && !file.isEmpty()){
+            String profileImageUrl = s3Service.storeProfileImage(file, payload.getUsername());
+            if(profileImageUrl != null){
+                user.setProfileImageUrl(profileImageUrl);
+            }else{
+                LOGGER.error("There are a problem uploading the profile image to S3 server. "
+                        +"The user's profile will be created without the image profile");
+            }
+
+        }
 
         //Set the plan and role defend on user's choosing plan
         Plan choosedPlan = planService.findByPlanId(planId);
