@@ -1,8 +1,10 @@
 package com.greenlucky.backend.service;
 
+import com.greenlucky.backend.persistence.domain.backend.PasswordResetToken;
 import com.greenlucky.backend.persistence.domain.backend.Plan;
 import com.greenlucky.backend.persistence.domain.backend.User;
 import com.greenlucky.backend.persistence.domain.backend.UserRole;
+import com.greenlucky.backend.persistence.responsitories.PasswordResetTokenRepository;
 import com.greenlucky.backend.persistence.responsitories.PlanRepository;
 import com.greenlucky.backend.persistence.responsitories.RoleRepository;
 import com.greenlucky.backend.persistence.responsitories.UserRepository;
@@ -38,29 +40,38 @@ public class UserService{
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
     @Transactional
     public User createUser(User user, PlansEnum plansEnum, Set<UserRole> userRoles){
 
-        String encryptPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encryptPassword);
+        User localUser = userRepository.findByEmail(user.getEmail());
 
-        Plan plan = new Plan(plansEnum);
-        //It makes sure plansEnum exit in the database
-        if(!planRepository.exists(plansEnum.getId())){
-            plan = planRepository.save(plan);
+        if(localUser != null){
+            LOGGER.error("User with username {} and email {} already email exist. Nothing will be done",
+                    user.getUsername(),user.getEmail());
+        }else {
+            String encryptPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptPassword);
+
+            Plan plan = new Plan(plansEnum);
+            //It makes sure plansEnum exit in the database
+            if (!planRepository.exists(plansEnum.getId())) {
+                plan = planRepository.save(plan);
+            }
+
+            user.setPlan(plan);
+
+            for (UserRole userRole : userRoles) {
+                roleRepository.save(userRole.getRole());
+            }
+
+            user.getUserRoles().addAll(userRoles);
+
+            localUser = userRepository.save(user);
         }
 
-        user.setPlan(plan);
-
-        for(UserRole userRole : userRoles){
-            roleRepository.save(userRole.getRole());
-        }
-
-        user.getUserRoles().addAll(userRoles);
-
-        user = userRepository.save(user);
-
-        return user;
+        return localUser;
     }
 
     /**
@@ -92,5 +103,10 @@ public class UserService{
         password = passwordEncoder.encode(password);
         userRepository.updateUserPassword(userId, password);
         LOGGER.debug("Password updated successfully for user id {}", userId);
+
+
+        Set<PasswordResetToken> resetTokens = passwordResetTokenRepository.findAllByUserId(userId);
+        if(!resetTokens.isEmpty())
+            passwordResetTokenRepository.delete(resetTokens);
     }
 }

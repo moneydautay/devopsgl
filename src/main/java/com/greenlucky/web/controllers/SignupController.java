@@ -156,6 +156,7 @@ public class SignupController {
             roles.add(new UserRole(user, RolesEnum.BASIC));
             registeredUser = userService.createUser(user, PlansEnum.BASIC, roles);
             LOGGER.debug("Add role {} for user {}", roles, user);
+
         }else{
             roles.add(new UserRole(user, RolesEnum.PRO));
 
