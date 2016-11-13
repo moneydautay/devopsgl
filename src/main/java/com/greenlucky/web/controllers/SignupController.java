@@ -6,6 +6,8 @@ import com.greenlucky.backend.persistence.domain.backend.UserRole;
 import com.greenlucky.backend.service.*;
 import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
+import com.greenlucky.exceptions.S3Exception;
+import com.greenlucky.exceptions.StripeException;
 import com.greenlucky.utils.StripeUtils;
 import com.greenlucky.utils.UserUtils;
 import com.greenlucky.web.domain.frontend.ProAccountPayload;
@@ -18,14 +20,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -36,6 +39,7 @@ public class SignupController {
 
     /** The application logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(SignupController.class);
+    private static final String GENERIC_ERROR_VIEW_NAME = "/error/genericError";
 
 
     @Autowired
@@ -195,6 +199,19 @@ public class SignupController {
         model.addAttribute(SIGNED_UP_MESSAGE_KEY, "true");
 
         return SUBSCRIPTION_VIEW_NAME;
+    }
+
+
+    @ExceptionHandler({StripeException.class, S3Exception.class})
+    public ModelAndView sigupException(HttpServletRequest request, Exception ex){
+        LOGGER.error("Request {} raised exception {}", request.getRequestURL(), ex);
+
+        ModelAndView model = new ModelAndView();
+        model.addObject("exception", ex);
+        model.addObject("url", request.getRequestURL());
+        model.addObject("timestamp", LocalDate.now(Clock.systemUTC()));
+        model.setViewName(GENERIC_ERROR_VIEW_NAME);
+        return model;
     }
 
     /**

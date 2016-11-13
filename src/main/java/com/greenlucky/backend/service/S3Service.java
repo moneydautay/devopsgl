@@ -3,6 +3,7 @@ package com.greenlucky.backend.service;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import com.greenlucky.exceptions.S3Exception;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,39 +46,44 @@ public class S3Service {
      * @param uploadFile The multipart file uploaded by the user
      * @param username The username for which to upload this file
      * @return The URL of the upload image
-     * @throws IOException
+     * @throws S3Exception If something wrong
      */
-    public String storeProfileImage(MultipartFile uploadFile, String username) throws IOException{
+    public String storeProfileImage(MultipartFile uploadFile, String username){
 
         String profileImageUrl = null;
 
-        if(uploadFile != null && !uploadFile.isEmpty()){
-            byte[] bytes = uploadFile.getBytes();
+        try{
+            if(uploadFile != null && !uploadFile.isEmpty()){
+                byte[] bytes = uploadFile.getBytes();
 
-            //The root of our temporary assets. Will create if it doesn't exist
-            File tmpImageStoredFolder = new File(tempImageStore + File.separatorChar + username);
-            if(!tmpImageStoredFolder.exists()){
-                LOGGER.info("Creating the temporary root for the S3 assets");
-                tmpImageStoredFolder.mkdirs();
+                //The root of our temporary assets. Will create if it doesn't exist
+                File tmpImageStoredFolder = new File(tempImageStore + File.separatorChar + username);
+                if(!tmpImageStoredFolder.exists()){
+                    LOGGER.info("Creating the temporary root for the S3 assets");
+                    tmpImageStoredFolder.mkdirs();
+                }
+
+                // The temporary file where the profile image will be stored
+                File tmpProfileImageFile = new File(tmpImageStoredFolder.getAbsolutePath()
+                        + File.separatorChar
+                        + PROFILE_IMAGE_FILE_NAME
+                        + "."
+                        + FilenameUtils.getExtension(uploadFile.getOriginalFilename()));
+                LOGGER.info("Temporary file will be saved to {}", tmpProfileImageFile.getAbsolutePath());
+
+                try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(tmpProfileImageFile.getAbsolutePath())))){
+                    stream.write(bytes);
+                }
+
+                profileImageUrl = this.storeProfileImageToS3(tmpProfileImageFile, username);
+
+                //Clean up the temporary folder
+                tmpProfileImageFile.delete();
             }
-
-            // The temporary file where the profile image will be stored
-            File tmpProfileImageFile = new File(tmpImageStoredFolder.getAbsolutePath()
-                    + File.separatorChar
-                    + PROFILE_IMAGE_FILE_NAME
-                    + "."
-                    + FilenameUtils.getExtension(uploadFile.getOriginalFilename()));
-            LOGGER.info("Temporary file will be saved to {}", tmpProfileImageFile.getAbsolutePath());
-
-            try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(tmpProfileImageFile.getAbsolutePath())))){
-                stream.write(bytes);
-            }
-
-            profileImageUrl = this.storeProfileImageToS3(tmpProfileImageFile, username);
-
-            //Clean up the temporary folder
-            tmpProfileImageFile.delete();
+        }catch (IOException e) {
+            throw new S3Exception(e);
         }
+
         return profileImageUrl;
     }
 
@@ -92,7 +98,7 @@ public class S3Service {
 
         if(!resource.exists()){
             LOGGER.error("The file {} does not exist. Throwing an exception", resource.getAbsolutePath());
-            throw new IllegalArgumentException("The file "+ resource.getAbsolutePath()+" doesn't exist");
+            throw new S3Exception("The file "+ resource.getAbsolutePath()+" doesn't exist");
         }
 
         String rootBucketUrl = this.ensureBucketExists(bucketName);

@@ -42,19 +42,19 @@ public class StripeService {
             stripeCustomerId = customer.getId();
         } catch (AuthenticationException e) {
             LOGGER.error("An authentication exception occurred while creating the Stripe customer", e);
-            throw new com.greenlucky.exceptions.StripeException();
+            throw new com.greenlucky.exceptions.StripeException(e);
         } catch (InvalidRequestException e) {
             LOGGER.error("An invalid request exception occurred while creating the Stripe customer", e);
-            throw new com.greenlucky.exceptions.StripeException();
+            throw new com.greenlucky.exceptions.StripeException(e);
         } catch (APIConnectionException e) {
             LOGGER.error("An API connection exception occurred while creating the Stripe customer", e);
-            throw new com.greenlucky.exceptions.StripeException();
+            throw new com.greenlucky.exceptions.StripeException(e);
         } catch (CardException e) {
             LOGGER.error("A Credit Card exception occurred while creating the Stripe customer", e);
-            throw new com.greenlucky.exceptions.StripeException();
+            throw new com.greenlucky.exceptions.StripeException(e);
         } catch (APIException e) {
             LOGGER.error("An API exception occurred while creating the Stripe customer", e);
-            throw new com.greenlucky.exceptions.StripeException();
+            throw new com.greenlucky.exceptions.StripeException(e);
         }
         return stripeCustomerId;
     }
