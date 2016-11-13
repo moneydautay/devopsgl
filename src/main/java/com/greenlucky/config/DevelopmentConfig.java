@@ -3,6 +3,7 @@ package com.greenlucky.config;
 import com.greenlucky.backend.service.EmailService;
 import com.greenlucky.backend.service.MockEmailService;
 import org.h2.server.web.WebServlet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,9 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("file:///${user.home}/Documents/Github/application-dev.properties")
 public class DevelopmentConfig {
 
+    @Value("${stripe.test.private.key}")
+    private String stripDevKey;
+
     @Bean
     public EmailService emailService(){
         return new MockEmailService();
@@ -28,4 +32,10 @@ public class DevelopmentConfig {
         bean.addUrlMappings("/console/*");
         return bean;
     }
+
+    @Bean
+    public String stripeKey(){
+        return stripDevKey;
+    }
+
 }

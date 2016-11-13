@@ -225,7 +225,31 @@ function main() {
                         message: 'The value is not valid %s phone number'
                     }
                 }
+            },
+            cardNumber: {
+                validators:{
+                    notEmpty:{
+                        message: 'The credit card is required'
+                    },
+                    creditCard:{
+                        message: 'The credit card is not valid'
+                    }
+                }
+            },
+            cardCode:{
+                validators:{
+                    notEmpty:{
+                        message: 'The CVV number is required'
+                    },
+                    cardCode:{
+                        creditCardField: 'cardNumber',
+                        message: 'The CVV number is not valid'
+                    }
+
+                }
             }
+
+
         }
     })
     // Revalidate phone number when changing the country

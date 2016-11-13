@@ -3,12 +3,10 @@ package com.greenlucky.web.controllers;
 import com.greenlucky.backend.persistence.domain.backend.Plan;
 import com.greenlucky.backend.persistence.domain.backend.User;
 import com.greenlucky.backend.persistence.domain.backend.UserRole;
-import com.greenlucky.backend.service.I18NService;
-import com.greenlucky.backend.service.PlanService;
-import com.greenlucky.backend.service.S3Service;
-import com.greenlucky.backend.service.UserService;
+import com.greenlucky.backend.service.*;
 import com.greenlucky.enums.PlansEnum;
 import com.greenlucky.enums.RolesEnum;
+import com.greenlucky.utils.StripeUtils;
 import com.greenlucky.utils.UserUtils;
 import com.greenlucky.web.domain.frontend.ProAccountPayload;
 import org.slf4j.Logger;
@@ -19,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,6 +50,9 @@ public class SignupController {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private StripeService stripeService;
 
     public static final String SIGNUP_URL_MAPPING = "/signup";
 
@@ -152,6 +154,33 @@ public class SignupController {
             LOGGER.debug("Add role {} for user {}", roles, user);
         }else{
             roles.add(new UserRole(user, RolesEnum.PRO));
+
+            if(StringUtils.isEmpty(payload.getCardCode()) ||
+                    StringUtils.isEmpty(payload.getCardMonth()) ||
+                    StringUtils.isEmpty(payload.getCardYear()) ||
+                    StringUtils.isEmpty(payload.getCardNumber())){
+                LOGGER.error("One or more credit card filds is empty  or null. Return error to the user");
+                model.addAttribute(SIGNED_UP_MESSAGE_KEY, "false");
+                model.addAttribute(ERROR_MESSAGE_KEY, i18NService.getMessage("signup.form.error.credit.card", locale));
+                return SUBSCRIPTION_VIEW_NAME;
+            }
+
+            //If the user select the PRO account, creates the stripe customer to store the stripe customer id in the stripe
+            Map<String, Object> tokenParams = StripeUtils.extractTokenParamsFromSignupPayload(payload);
+
+            Map<String, Object> customerParams = new HashMap<>();
+            customerParams.put("description","Devoplsgl customer. Username: "+payload.getUsername());
+            customerParams.put("email", payload.getEmail());
+            customerParams.put("plan", choosedPlan.getId());
+
+            LOGGER.info("Subscribing the customer to plan {}", choosedPlan.getName());
+
+            String stripeCustomerId = stripeService.createCustomer(tokenParams, customerParams);
+
+            LOGGER.info("Username: {} has been subscribed to Stripe", payload.getUsername());
+
+            user.setStripeCustomerId(stripeCustomerId);
+
             registeredUser = userService.createUser(user, PlansEnum.PRO, roles);
             LOGGER.debug("Add role {} for user {}", roles, user);
         }
